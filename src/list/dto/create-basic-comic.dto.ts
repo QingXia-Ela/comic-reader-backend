@@ -5,14 +5,14 @@ export class CreateBasicComicDto {
   date: string;
   tags: string[];
   description: string;
-  constructor(
-    id: number,
-    title?: string,
-    cover?: string,
-    date?: string,
-    tags?: string[],
-    description?: string,
-  ) {
+  constructor({
+    id,
+    title,
+    cover,
+    date,
+    tags,
+    description,
+  }: Partial<CreateBasicComicDto>) {
     this.id = id;
     this.title = title ?? '';
     this.cover = cover ?? '';

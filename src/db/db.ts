@@ -1,13 +1,11 @@
 import { Logger } from '@nestjs/common';
 import { randomInt } from 'crypto';
 import * as fs from 'fs-extra';
-import { CreateBasicComicDto } from 'src/list/dto/create-basic-comic.dto';
+import { CreateComicDto } from 'src/list/dto/create-comic.dto';
 import sleep from 'src/utils/sleep';
 
 const dbPath = 'book';
-// import {} from '@nestjs/common'
 
-// import sqlite3 from 'sqlite3';
 // export const sql = new (sqlite3.verbose().Database)('db/book.db');
 
 // sql.serialize(() => { });
@@ -15,7 +13,7 @@ const dbPath = 'book';
 // process.on('exit', () => {
 //   sql.close();
 // });
-export const dbMap = new Map<number, CreateBasicComicDto>();
+export const dbMap = new Map<number, CreateComicDto>();
 
 async function getComicList() {
   return (await fs.readdir(dbPath)).map((p) => `${dbPath}/${p}`);
@@ -32,21 +30,45 @@ function getUniqueId(): Promise<number> {
 }
 
 async function handleNewData(p: string) {
+  let path: string | string[] = p.split('/');
+  path.pop();
+  path = path.join('/');
+  const imgList = await getImgList(path);
   const dirName = p.split('/')[1];
   const id = await getUniqueId();
-  const obj = new CreateBasicComicDto(id, dirName);
+  const obj = new CreateComicDto({ id, title: dirName, imgList });
   await fs.writeJson(p, obj, { spaces: 2 });
   dbMap.set(id, obj);
+}
+
+async function updateMetaDataJson(
+  p: string,
+  source: CreateComicDto,
+  obj: Partial<CreateComicDto>,
+) {
+  await fs.writeJson(p, { ...source, ...obj }, { spaces: 2 });
+}
+
+const suffix = ['.jpg', '.png', '.jpeg', '.gif', '.webp', '.avif', '.bmp'];
+async function getImgList(path: string) {
+  return (await fs.readdir(path)).filter((p) =>
+    suffix.some((s) => p.endsWith(s)),
+  );
 }
 
 async function initMetaData(pathList: string[]) {
   const newData = [];
   // first insert exist json
   for (let path of pathList) {
+    const imgList = await getImgList(path);
     path += '/metadata.json';
     try {
       await fs.stat(path);
-      const finalData = await fs.readJson(path);
+      const finalData = (await fs.readJson(path)) as CreateComicDto;
+      if (finalData.imgList.length !== imgList.length) {
+        finalData.imgList = imgList;
+        await updateMetaDataJson(path, finalData, { imgList });
+      }
       dbMap.set(finalData.id, finalData);
     } catch (e) {
       newData.push(path);
@@ -70,7 +92,14 @@ async function updateMetaData(pathList: string[]) {
     const jsonPath = path + '/metadata.json';
     try {
       await fs.stat(jsonPath);
-      const finalData = await fs.readJson(jsonPath);
+      const finalData = (await fs.readJson(jsonPath)) as CreateComicDto;
+
+      const dirName = jsonPath.split('/')[1];
+      await updateMetaDataJson(jsonPath, finalData, {
+        title: dirName,
+        imgList: await getImgList(path),
+      });
+
       dbMap.set(finalData.id, finalData);
       // delete exist data
       cloneMap.delete(finalData.id);
