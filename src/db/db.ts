@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { randomInt } from 'crypto';
 import * as fs from 'fs-extra';
 import { CreateBasicComicDto } from 'src/list/dto/create-basic-comic.dto';
@@ -15,6 +16,10 @@ const dbPath = 'book';
 // });
 export const dbMap = new Map();
 
+async function getComicList() {
+  return (await fs.readdir(dbPath)).map((p) => `${dbPath}/${p}`);
+}
+
 function getUniqueId(): Promise<number> {
   return new Promise((res) => {
     let id = randomInt(1, 999999);
@@ -29,12 +34,13 @@ async function handleNewData(p: string) {
   const dirName = p.split('/')[1];
   const id = await getUniqueId();
   const obj = new CreateBasicComicDto(id, dirName);
-  await fs.writeJson(p, obj);
+  await fs.writeJson(p, obj, { spaces: 2 });
   dbMap.set(id, obj);
 }
 
 async function initMetaData(pathList: string[]) {
   const newData = [];
+  // first insert exist json
   for (let path of pathList) {
     path += '/metadata.json';
     try {
@@ -42,27 +48,62 @@ async function initMetaData(pathList: string[]) {
       const finalData = await fs.readJson(path);
       dbMap.set(finalData.id, finalData);
     } catch (e) {
-      // await handleNewData(path);
       newData.push(path);
     }
   }
 
+  // insert new
   for (const path of newData) {
     await handleNewData(path);
   }
 }
 
-async function updateMetaData(pathList: string) {
+async function updateMetaData(pathList: string[]) {
   const cloneMap = new Map(Array.from(dbMap));
   for (const path of pathList) {
-    // const finalData = await fs.readJson(path);
-    // dbMap.set(finalData.id, finalData);
+    const jsonPath = path + '/metadata.json';
+    try {
+      await fs.stat(jsonPath);
+      const finalData = await fs.readJson(jsonPath);
+      dbMap.set(finalData.id, finalData);
+      // delete exist data
+      cloneMap.delete(finalData.id);
+    } catch (e) {
+      // is new comic
+      if (fs.existsSync(path)) {
+        await handleNewData(jsonPath);
+      }
+    }
   }
+
+  // check cloneMap data, if something exist means actual comic removed
+  cloneMap.forEach((value) => {
+    dbMap.delete(value.id);
+  });
 }
 
-export default async function init() {
-  const comicList = fs.readdirSync(dbPath);
-  await initMetaData(comicList);
-  // console.log(comicList);
-  // await Promise.all(comicList.map((p) => initMetaData(`${dbPath}/${p}`)));
+/**
+ * init database
+ * @param refreshTime refresh database time (default 5 minutes)
+ * @returns return a function to clean and stop
+ */
+export default async function init(refreshTime = 5) {
+  await initMetaData(await getComicList());
+  let dbLen = dbMap.size;
+  Logger.log(`Database Init! Now has ${dbMap.size} comic.`);
+  const timer = setInterval(
+    async () => {
+      updateMetaData(await getComicList()).then(() => {
+        if (dbMap.size !== dbLen) {
+          dbLen = dbMap.size;
+          Logger.log(`Database Update! Now has ${dbMap.size} comic.`);
+        }
+      });
+    },
+    refreshTime * 60 * 1000,
+  );
+
+  return () => {
+    clearInterval(timer);
+  };
 }
