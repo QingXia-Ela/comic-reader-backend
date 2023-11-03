@@ -12,7 +12,14 @@ export class ListService {
     const list = this.dbService.getList(count, offset);
     return {
       hasMore: list.length + offset < this.dbService.getComicCount(),
-      data: list,
+      data: list.map((comic) => ({
+        id: comic.id,
+        title: comic.title,
+        cover: comic.cover,
+        date: comic.date,
+        tags: comic.tags,
+        description: comic.description,
+      })),
     };
   }
 }

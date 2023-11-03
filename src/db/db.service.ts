@@ -1,12 +1,10 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import init, { dbMap, getList } from './db';
 
+init();
+
 @Injectable()
 export class DbService {
-  constructor() {
-    init();
-  }
-
   getNewest() {
     return getList().slice(0, 10);
   }
@@ -20,7 +18,7 @@ export class DbService {
   }
 
   getDbMapVal(id: number) {
-    const comic = dbMap.get(id);
+    const comic = dbMap.get(parseInt(id.toString()));
     if (!comic) throw new HttpException('comic not found!', 404);
     return comic;
   }

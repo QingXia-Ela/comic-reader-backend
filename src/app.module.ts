@@ -9,10 +9,11 @@ import { TransformInterceptor } from './interceptor/transform.interceptor';
 import { DbService } from './db/db.service';
 import { ListModule } from './list/list.module';
 import { ImgModule } from './img/img.module';
+import { ComicModule } from './comic/comic.module';
 
 @Module({
-  imports: [ListModule, ImgModule],
+  imports: [ListModule, ImgModule, ComicModule],
   controllers: [AppController, SearchController, LoginController],
-  providers: [AppService],
+  providers: [AppService, DbService],
 })
 export class AppModule {}
