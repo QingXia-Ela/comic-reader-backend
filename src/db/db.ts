@@ -15,7 +15,7 @@ const dbPath = 'book';
 // process.on('exit', () => {
 //   sql.close();
 // });
-export const dbMap = new Map();
+export const dbMap = new Map<number, CreateBasicComicDto>();
 
 async function getComicList() {
   return (await fs.readdir(dbPath)).map((p) => `${dbPath}/${p}`);

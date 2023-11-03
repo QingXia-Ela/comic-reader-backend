@@ -1,9 +1,9 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 
 @Controller('img')
 export class ImgController {
   @Get(':id/:img')
-  getImg(id: number, img: string) {
+  getImg(@Param() { id, img }) {
     return '';
   }
 }

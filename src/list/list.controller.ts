@@ -1,13 +1,15 @@
 import { Controller, Get, Optional, ParseIntPipe, Query } from '@nestjs/common';
-import { DbService } from 'src/db/db.service';
 import { Range } from './decorator/LimitRange.decorator';
+import { ListService } from './list.service';
 
-@Controller('list')
+@Controller({
+  path: 'list',
+})
 export class ListController {
-  constructor(private dbService: DbService) { }
+  constructor(private listService: ListService) {}
   @Get('newest')
   getNewest(@Query('count') count: number) {
-    return this.dbService.getNewest();
+    return this.listService.getNewest(count);
   }
 
   @Get()
@@ -15,10 +17,6 @@ export class ListController {
     @Query('count', ParseIntPipe) @Range([1, 20]) count: number,
     @Query('offset', ParseIntPipe) @Optional() offset = 0,
   ) {
-    const list = this.dbService.getList(count, offset);
-    return {
-      hasMore: list.length + offset < this.dbService.getComicCount(),
-      data: list,
-    };
+    return this.listService.getList(count, offset);
   }
 }
