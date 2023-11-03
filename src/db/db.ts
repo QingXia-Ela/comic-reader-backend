@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { randomInt } from 'crypto';
 import * as fs from 'fs-extra';
 import { CreateBasicComicDto } from 'src/list/dto/create-basic-comic.dto';
+import sleep from 'src/utils/sleep';
 
 const dbPath = 'book';
 // import {} from '@nestjs/common'
@@ -52,14 +53,19 @@ async function initMetaData(pathList: string[]) {
     }
   }
 
+  let delay = 100;
   // insert new
   for (const path of newData) {
+    await sleep(delay);
+    delay += 100;
     await handleNewData(path);
   }
 }
 
 async function updateMetaData(pathList: string[]) {
   const cloneMap = new Map(Array.from(dbMap));
+
+  let delay = 100;
   for (const path of pathList) {
     const jsonPath = path + '/metadata.json';
     try {
@@ -71,6 +77,8 @@ async function updateMetaData(pathList: string[]) {
     } catch (e) {
       // is new comic
       if (fs.existsSync(path)) {
+        await sleep(delay);
+        delay += 100;
         await handleNewData(jsonPath);
       }
     }
@@ -79,6 +87,12 @@ async function updateMetaData(pathList: string[]) {
   // check cloneMap data, if something exist means actual comic removed
   cloneMap.forEach((value) => {
     dbMap.delete(value.id);
+  });
+}
+
+export function getList() {
+  return Array.from(dbMap.values()).sort((a, b) => {
+    return +new Date(b.date) - +new Date(a.date);
   });
 }
 

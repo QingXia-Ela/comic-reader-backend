@@ -13,8 +13,8 @@
 - pnpm 8.6.12
 
 ```cmd
-git clone 
-cd 
+git clone https://github.com/QingXia-Ela/hentai-comic-reader-backend.git
+cd hentai-comic-reader-backend
 pnpm i
 pnpm build
 pnpm H

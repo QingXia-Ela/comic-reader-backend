@@ -18,7 +18,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     Logger.error(`请求出错: ${request.url}`, message);
     const errorResponse = {
       code: exception.getStatus(), // 自定义code
-      message: 'Request Failed!',
+      message: `Request Failed! ${message}`,
     };
     const status =
       exception instanceof HttpException
