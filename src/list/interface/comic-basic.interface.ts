@@ -4,5 +4,6 @@ export interface ComicBasic {
   cover: string;
   date: string;
   tags: string[];
+  authors: string[];
   description: string;
 }

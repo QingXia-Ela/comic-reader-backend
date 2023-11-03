@@ -1,4 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import init from './db';
 
 @Injectable()
-export class DbService { }
+export class DbService {
+  constructor() {
+    init();
+  }
+}

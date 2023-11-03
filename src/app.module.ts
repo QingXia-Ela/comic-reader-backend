@@ -6,6 +6,7 @@ import { SearchController } from './search/search.controller';
 import { LoginController } from './login/login.controller';
 import { ImgController } from './img/img.controller';
 import { TransformInterceptor } from './interceptor/transform.interceptor';
+import { DbService } from './db/db.service';
 
 @Module({
   imports: [],
@@ -16,6 +17,6 @@ import { TransformInterceptor } from './interceptor/transform.interceptor';
     LoginController,
     ImgController,
   ],
-  providers: [AppService],
+  providers: [AppService, DbService],
 })
 export class AppModule { }
