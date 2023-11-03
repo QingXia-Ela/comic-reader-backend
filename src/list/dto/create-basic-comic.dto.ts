@@ -1,5 +1,3 @@
-import { randomInt } from 'crypto';
-
 export class CreateBasicComicDto {
   id: number;
   title: string;
@@ -18,7 +16,7 @@ export class CreateBasicComicDto {
     this.id = id;
     this.title = title ?? '';
     this.cover = cover ?? '';
-    this.date = date ?? '';
+    this.date = date ?? new Date().toISOString();
     this.tags = tags ?? [];
     this.description = description ?? '';
   }
