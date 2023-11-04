@@ -4,7 +4,10 @@ import { Request, Response, NextFunction } from 'express';
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
-    Logger.log(req.originalUrl, `${new Date().toISOString()} ${req.method}`);
+    Logger.log(
+      `${req.method} ${req.originalUrl}`,
+      `${new Date().toISOString()}`,
+    );
     next();
   }
 }
