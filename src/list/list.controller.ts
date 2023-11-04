@@ -15,7 +15,7 @@ export class ListController {
   @Get()
   getList(
     @Query('count', ParseIntPipe) @Range([1, 20]) count: number,
-    @Query('offset', ParseIntPipe) @Optional() offset = 0,
+    @Query('offset') @Optional() offset = 0,
   ) {
     return this.listService.getList(count, offset);
   }
