@@ -5,7 +5,7 @@ import { ListController } from './list/list.controller';
 import { SearchController } from './search/search.controller';
 import { LoginController } from './login/login.controller';
 import { ImgController } from './img/img.controller';
-import { TransformInterceptor } from './interceptor/transform.interceptor';
+import { TransformInterceptor } from './common/interceptor/transform.interceptor';
 import { DbService } from './db/db.service';
 import { ListModule } from './list/list.module';
 import { ImgModule } from './img/img.module';

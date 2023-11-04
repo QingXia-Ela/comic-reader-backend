@@ -133,7 +133,7 @@ export function getList() {
 export default async function init(refreshTime = 5) {
   await initMetaData(await getComicList());
   let dbLen = dbMap.size;
-  Logger.log(`Database Init! Now has ${dbMap.size} comic.`);
+  Logger.log(`Database Init! Now has ${dbMap.size} comic.`, 'DB Service');
   const timer = setInterval(
     async () => {
       updateMetaData(await getComicList()).then(() => {
