@@ -1,22 +1,25 @@
-use std::time::Instant;
+use std::{env, fs::File, io::Read, time::Instant};
 
-use crate::{buffer_disorder::get_md5, core::encrypt_img};
+use crate::{
+    buffer_disorder::{decrypt, encrypt, get_md5},
+    core::encrypt_img,
+};
 extern crate crypto;
 
-use image::{io::Reader, DynamicImage};
-
 mod buffer_disorder;
+mod config;
 mod core;
 mod img_data;
 mod random;
 mod random_sequence;
 
 fn main() {
-    // println!("Hello, world!");
-    let img = Reader::open("./test.jpg").unwrap().decode().unwrap();
-    // let enc_img: Option<DynamicImage> = encrypt_img(img.into()).into();
-    // enc_img.unwrap().save("./enc.jpg").unwrap();
-
-    println!("{:?}", get_md5(String::from("test")).as_bytes());
-    // let arr: Vec<u8> = img.as_rgba8().unwrap().to_vec();
+    // let mut buffer = Vec::new();
+    // File::open("./test.jpg")
+    //     .unwrap()
+    //     .read_to_end(&mut buffer)
+    //     .unwrap();
+    let args: Vec<String> = env::args().collect();
+    let config = config::Config::new(&args);
+    println!("{:?}", config);
 }

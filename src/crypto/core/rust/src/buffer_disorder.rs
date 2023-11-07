@@ -1,7 +1,5 @@
 extern crate crypto;
 
-use crypto::aes::{ecb_decryptor, ecb_encryptor, KeySize};
-use crypto::buffer::{ReadBuffer, WriteBuffer};
 use crypto::digest::Digest;
 
 pub fn get_md5(data: String) -> String {
@@ -11,32 +9,28 @@ pub fn get_md5(data: String) -> String {
     md5.result_str()
 }
 
-pub fn encrypt(data: &mut Vec<u8>, key: String) -> Vec<u8> {
-    let mut encryptor = ecb_encryptor(
-        KeySize::KeySize128,
-        key.as_bytes(),
-        crypto::blockmodes::NoPadding,
-    );
-    let mut buffer = [0; 16];
-    let mut read_buffer = crypto::buffer::RefReadBuffer::new(data);
-    let mut write_buffer = crypto::buffer::RefWriteBuffer::new(&mut buffer);
-
-    encryptor
-        .encrypt(&mut read_buffer, &mut write_buffer, true)
-        .unwrap();
-    write_buffer.take_read_buffer().take_remaining().to_vec()
+pub fn encrypt(data: &Vec<u8>, key: String) -> Vec<u8> {
+    let key = key.as_bytes();
+    let mut res = vec![0; data.len()];
+    for i in 0..data.len() {
+        res[i] = data[i] ^ key[i % 32];
+    }
+    res
 }
 
-pub fn decrypt(data: &mut Vec<u8>, key: String) -> Vec<u8> {
-    let mut decryptor = ecb_decryptor(
-        KeySize::KeySize128,
-        key.as_bytes(),
-        crypto::blockmodes::NoPadding,
-    );
-    let mut buffer = [0; 16];
-    let mut read_buffer = crypto::buffer::RefReadBuffer::new(data);
-    let mut write_buffer = crypto::buffer::RefWriteBuffer::new(&mut buffer);
+pub fn decrypt(data: &Vec<u8>, key: String) -> Vec<u8> {
+    let key = key.as_bytes();
+    let mut res = vec![0; data.len()];
+    for i in 0..data.len() {
+        res[i] = data[i] ^ key[i % 32];
+    }
+    res
+}
 
-    let _ = decryptor.decrypt(&mut read_buffer, &mut write_buffer, true);
-    write_buffer.take_read_buffer().take_remaining().to_vec()
+pub fn aes_encrypt(data: &Vec<u8>, key: String) {
+    todo!("")
+}
+
+pub fn aes_decrypt(data: &Vec<u8>, key: String) {
+    todo!("")
 }
