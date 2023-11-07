@@ -19,7 +19,8 @@ export class CryptoService {
   async encryptoList(dir: string, outputDir: string) {
     await fs.ensureDir(outputDir);
     await fs.emptyDir(outputDir);
-    console.time(`${Logger.getTimestamp()} Encrypto ${dir}`);
+    const label = `\t\t${Logger.getTimestamp()}\tEncrypto ${dir}`;
+    console.time(label);
     await Promise.all(
       (await fs.readdir(dir))
         .filter((p) => suffix.some((s) => p.endsWith(s)))
@@ -27,6 +28,6 @@ export class CryptoService {
           await this.encrypto(`${dir}/${v}`, `${outputDir}/${v}.buf`);
         }),
     );
-    console.timeEnd(`${Logger.getTimestamp()} Encrypto ${dir}`);
+    console.timeEnd(label);
   }
 }
