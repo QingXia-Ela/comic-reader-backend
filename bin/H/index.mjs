@@ -14,11 +14,14 @@ export default defineSetting({
     header_key: 'auth_key',
     header_value: '114514',
   },
+  server: {
+    port: 55033,
+  },
 });
 `;
 
 try {
-  fs.stat('./settings.custom.ts');
+  fs.statSync('./settings.custom.ts');
 } catch (e) {
   fs.writeFileSync('./settings.custom.ts', DEFAULT_SETTINGS_STR);
   Logger.log('Write default settings to /settings.custom.ts', 'Running Script');

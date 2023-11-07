@@ -1,6 +1,6 @@
 # Hentai Comic Reader Backend
 
-**还在开发中！还在开发中！**
+**处在测试阶段！使用时请关注仓库动态！**
 
 ## 前言
 
@@ -18,7 +18,6 @@
 git clone https://github.com/QingXia-Ela/hentai-comic-reader-backend.git
 cd hentai-comic-reader-backend
 pnpm i
-pnpm build
 pnpm H
 ```
 
@@ -31,6 +30,19 @@ pnpm H
 **图片名字需要对应图片顺序！！你也不想图片是乱序的罢.jpg**
 
 程序每5分钟都会自动处理 `book` 文件夹下的图片集并同步到接口
+
+## TODO
+
+- [ ] 图片及过长的响应启用响应体压缩
+- [ ] 加密实现 aes 加密及 rust 加速处理
+- [ ] 图片数据刷新策略优化
+- [ ] 图片集生成 json 配置策略优化
+- [ ] 允许迁移到 SQLite 或 MongoDB
+- [ ] 搜索条件设置
+
+## API
+
+请启动项目并通过 `localhost:<your port>/doc` 访问文档
 
 ## License
 

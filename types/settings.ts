@@ -1,3 +1,5 @@
+import { defaultsDeep } from 'lodash';
+
 export interface CryptoSetting {
   /**
    * 图片加密密钥，默认为 `114514`
@@ -26,9 +28,19 @@ export interface AuthSettings {
   header_value?: string;
 }
 
+export interface ServerSettings {
+  /**
+   * 端口，建议使用高位端口，我也不知道为什么
+   *
+   * 默认为 `55033`
+   **/
+  port?: number;
+}
+
 interface Setting {
   crypto?: CryptoSetting;
   auth?: AuthSettings;
+  server?: ServerSettings;
 }
 
 const DEFAULT_SETTING: Setting = {
@@ -41,8 +53,11 @@ const DEFAULT_SETTING: Setting = {
     header_key: 'auth_key',
     header_value: '114514',
   },
+  server: {
+    port: 55033,
+  },
 };
 
 export default function defineSetting(options: Partial<Setting> = {}) {
-  return { ...DEFAULT_SETTING, ...options };
+  return defaultsDeep(options, DEFAULT_SETTING);
 }
