@@ -1,5 +1,6 @@
 export class CreateBasicComicDto {
   id: number;
+  authors: string[];
   title: string;
   cover: string;
   date: string;
@@ -12,9 +13,11 @@ export class CreateBasicComicDto {
     date,
     tags,
     description,
+    authors,
   }: Partial<CreateBasicComicDto>) {
     this.id = id;
     this.title = title ?? '';
+    this.authors = authors ?? [];
     this.cover = cover ?? '';
     this.date = date ?? new Date().toISOString();
     this.tags = tags ?? [];

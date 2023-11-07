@@ -7,6 +7,7 @@ export default function (comic: CreateComicDto) {
     cover: comic.cover,
     date: comic.date,
     tags: comic.tags,
+    authors: comic.authors,
     description: comic.description,
   };
 }

@@ -6,13 +6,6 @@ import sleep from 'src/utils/sleep';
 
 const dbPath = 'book';
 
-// export const sql = new (sqlite3.verbose().Database)('db/book.db');
-
-// sql.serialize(() => { });
-
-// process.on('exit', () => {
-//   sql.close();
-// });
 export const dbMap = new Map<number, CreateComicDto>();
 
 async function getComicList() {
