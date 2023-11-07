@@ -2,13 +2,12 @@ import fs from 'fs';
 import { randomUUID } from 'crypto';
 import { Logger } from '@nestjs/common';
 
-const DEFAULT_SETTINGS_STR = `
-import defineSetting from 'types/settings';
+const DEFAULT_SETTINGS_STR = `import defineSetting from 'types/settings';
 
 export default defineSetting({
   crypto: {
     active: true,
-    key: ${randomUUID()},
+    key: '${randomUUID()}',
   },
   auth: {
     active: true,
@@ -19,8 +18,8 @@ export default defineSetting({
 `;
 
 try {
-  fs.stat('/settings.custom.ts');
+  fs.stat('./settings.custom.ts');
 } catch (e) {
-  fs.writeFileSync('/settings.custom.ts', DEFAULT_SETTINGS_STR);
+  fs.writeFileSync('./settings.custom.ts', DEFAULT_SETTINGS_STR);
   Logger.log('Write default settings to /settings.custom.ts', 'Running Script');
 }
