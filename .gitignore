@@ -37,3 +37,7 @@ lerna-debug.log*
 # db
 /db
 book
+
+# config
+backend.config.json
+settings.ts
