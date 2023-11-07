@@ -155,6 +155,7 @@ export default async function init(refreshTime = 5) {
   Logger.log(`Database Init! Now has ${dbMap.size} comic.`, 'DB Service');
   const timer = setInterval(
     async () => {
+      Logger.log('Database Refreshing...', 'DB Service');
       updateMetaData(await getComicList()).then(() => {
         if (dbMap.size !== dbLen) {
           dbLen = dbMap.size;
