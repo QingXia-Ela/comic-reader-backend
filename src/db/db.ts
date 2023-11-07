@@ -1,12 +1,25 @@
 import { Logger } from '@nestjs/common';
 import { randomInt } from 'crypto';
 import * as fs from 'fs-extra';
+import settingsCustom from 'settings.custom';
+import { CryptoService } from 'src/crypto/crypto.service';
 import { CreateComicDto } from 'src/list/dto/create-comic.dto';
 import sleep from 'src/utils/sleep';
 
 const dbPath = 'book';
 
+const CryptoServiceObj = new CryptoService();
+
 export const dbMap = new Map<number, CreateComicDto>();
+export const suffix = [
+  '.jpg',
+  '.png',
+  '.jpeg',
+  '.gif',
+  '.webp',
+  '.avif',
+  '.bmp',
+];
 
 async function getComicList() {
   return (await fs.readdir(dbPath)).map((p) => `${dbPath}/${p}`);
@@ -20,6 +33,16 @@ function getUniqueId(): Promise<number> {
     }
     res(id);
   });
+}
+
+async function encryptImg(pathList: string[]) {
+  if (!settingsCustom.crypto.active) return;
+
+  await Promise.all(
+    pathList.map(async (p) => {
+      await CryptoServiceObj.encryptoList(p, `${p}/encrypted`);
+    }),
+  );
 }
 
 async function handleNewData(p: string) {
@@ -42,7 +65,6 @@ async function updateMetaDataJson(
   await fs.writeJson(p, { ...source, ...obj }, { spaces: 2 });
 }
 
-const suffix = ['.jpg', '.png', '.jpeg', '.gif', '.webp', '.avif', '.bmp'];
 async function getImgList(path: string) {
   return (await fs.readdir(path)).filter((p) =>
     suffix.some((s) => p.endsWith(s)),
@@ -75,6 +97,8 @@ async function initMetaData(pathList: string[]) {
     delay += 100;
     await handleNewData(path);
   }
+
+  await encryptImg(pathList);
 }
 
 async function updateMetaData(pathList: string[]) {
@@ -110,6 +134,8 @@ async function updateMetaData(pathList: string[]) {
   cloneMap.forEach((value) => {
     dbMap.delete(value.id);
   });
+
+  await encryptImg(pathList);
 }
 
 export function getList() {

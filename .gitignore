@@ -41,3 +41,4 @@ book
 # config
 backend.config.json
 settings.ts
+settings.custom.ts
