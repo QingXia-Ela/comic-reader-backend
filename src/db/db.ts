@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { HttpException, Logger } from '@nestjs/common';
 import { randomInt } from 'crypto';
 import * as fs from 'fs-extra';
 import settingsCustom from 'settings.custom';
@@ -22,7 +22,9 @@ export const suffix = [
 ];
 
 async function getComicList() {
-  return (await fs.readdir(dbPath)).map((p) => `${dbPath}/${p}`);
+  return (await fs.readdir(dbPath))
+    .filter((p) => !p.includes('.json'))
+    .map((p) => `${dbPath}/${p}`);
 }
 
 function getUniqueId(): Promise<number> {
@@ -142,6 +144,18 @@ export function getList() {
   return Array.from(dbMap.values()).sort((a, b) => {
     return +new Date(b.date) - +new Date(a.date);
   });
+}
+
+/**
+ * check if comic exist
+ * @param id comic id
+ * @returns return true if exist
+ *
+ * @throws `HttpException` if not exist
+ */
+export function isExist(id: number, code = 400) {
+  if (!dbMap.has(id)) throw new HttpException('comic not exist!', code);
+  return true;
 }
 
 /**

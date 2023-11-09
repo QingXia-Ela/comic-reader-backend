@@ -8,7 +8,7 @@ export class SearchService {
     // return [];
     return Array.from(dbMap.values())
       .filter((comic) => {
-        return keywords.some((keyword) => {
+        return keywords.every((keyword) => {
           return (
             comic.tags.includes(keyword) || comic.authors.includes(keyword)
           );

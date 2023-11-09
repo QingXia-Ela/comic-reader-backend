@@ -15,9 +15,10 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { SearchModule } from './search/search.module';
 import { AppGuard } from './app.guard';
 import { GuardMiddleware } from './common/middleware/guard.middleware';
+import { FavoriteModule } from './favorite/favorite.module';
 
 @Module({
-  imports: [ListModule, ImgModule, ComicModule, SearchModule],
+  imports: [ListModule, ImgModule, ComicModule, SearchModule, FavoriteModule],
   controllers: [AppController, LoginController],
   providers: [AppService, DbService],
 })
