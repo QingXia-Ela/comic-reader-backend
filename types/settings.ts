@@ -1,4 +1,5 @@
 import { defaultsDeep } from 'lodash';
+import * as fs from 'fs';
 
 export interface CryptoSetting {
   /**
@@ -37,10 +38,29 @@ export interface ServerSettings {
   port?: number;
 }
 
+export interface HttpsSettings {
+  /**
+   * 证书路径
+   */
+  cert?: string;
+  /**
+   * 证书密钥
+   */
+  key?: string;
+  /**
+   * 证书ca
+   */
+  ca?: string;
+}
+
 interface Setting {
   crypto?: CryptoSetting;
   auth?: AuthSettings;
   server?: ServerSettings;
+  /**
+   * 当传入值时即启用https
+   */
+  https?: HttpsSettings;
 }
 
 const DEFAULT_SETTING: Setting = {
@@ -59,5 +79,13 @@ const DEFAULT_SETTING: Setting = {
 };
 
 export default function defineSetting(options: Partial<Setting> = {}) {
+  // https crt read
+  if (options.https) {
+    Object.entries(options.https).forEach(([key, value]) => {
+      if (value) {
+        options.https[key] = fs.readFileSync(value, 'utf-8');
+      }
+    });
+  }
   return defaultsDeep(options, DEFAULT_SETTING);
 }

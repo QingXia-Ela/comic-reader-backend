@@ -6,7 +6,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import settingsCustom from 'settings.custom';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    httpsOptions: settingsCustom.https ?? undefined,
+  });
   app
     .useGlobalInterceptors(new TransformInterceptor())
     .useGlobalFilters(new HttpExceptionFilter());
