@@ -1,4 +1,4 @@
-# Hentai Comic Reader Backend
+# Comic Reader Backend
 
 **处在测试阶段！使用时请关注仓库动态！**
 
