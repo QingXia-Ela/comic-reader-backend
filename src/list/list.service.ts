@@ -14,6 +14,7 @@ export class ListService {
     return {
       hasMore: list.length + offset < this.dbService.getComicCount(),
       data: list.map(getSimplifyComic),
+      total: this.dbService.getComicCount(),
     };
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Controller, Get, HttpException, Param, Res } from '@nestjs/common';
 import { Response } from 'express';
 import settingsCustom from 'settings.custom';
 import { DbService } from 'src/db/db.service';
@@ -17,11 +17,20 @@ export class ImgController {
         {
           root: 'book',
         },
+        (err) => {
+          if (err) res.sendStatus(404);
+        },
       );
     } else {
-      return res.sendFile(`${this.dbService.getDbMapVal(id).title}/${img}`, {
-        root: 'book',
-      });
+      return res.sendFile(
+        `${this.dbService.getDbMapVal(id).title}/${img}`,
+        {
+          root: 'book',
+        },
+        (err) => {
+          if (err) res.sendStatus(404);
+        },
+      );
     }
   }
 }
