@@ -17,20 +17,11 @@ export class ImgController {
     } catch (e) {
       throw new HttpException('img not found', 404);
     }
-    await new Promise<void>((resolve, rej) => {
-      res.setHeader('cache-control', 'max-age=30000');
-      if (settingsCustom.crypto.active)
-        res.setHeader('content-type', 'application/octet-stream');
-      res.sendFile(
-        path,
-        {
-          root: 'book',
-        },
-        (err) => {
-          if (err) rej('');
-          else resolve();
-        },
-      );
+    res.setHeader('cache-control', 'max-age=30000');
+    if (settingsCustom.crypto.active)
+      res.setHeader('content-type', 'application/octet-stream');
+    res.sendFile(path, {
+      root: 'book',
     });
   }
 }
