@@ -12,6 +12,13 @@ export interface CryptoSetting {
    * 是否启用图片加密
    */
   active?: boolean;
+  /**
+   * 是否同步图片加密，假如你不想保留原图时可以启用此项
+   *
+   * 默认为 `false`
+   *
+   */
+  comic_sync_crypto?: boolean;
 }
 
 export interface AuthSettings {
@@ -67,6 +74,7 @@ const DEFAULT_SETTING: Setting = {
   crypto: {
     active: true,
     key: 114514,
+    comic_sync_crypto: false,
   },
   auth: {
     active: true,

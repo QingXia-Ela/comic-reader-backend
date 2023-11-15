@@ -54,7 +54,12 @@ async function handleNewData(p: string) {
   const imgList = await getImgList(path);
   const dirName = p.split('/')[1];
   const id = await getUniqueId();
-  const obj = new CreateComicDto({ id, title: dirName, imgList });
+  const obj = new CreateComicDto({
+    id,
+    title: dirName,
+    imgList,
+    cover: imgList[0],
+  });
   await fs.writeJson(p, obj, { spaces: 2 });
   dbMap.set(id, obj);
 }
@@ -68,6 +73,13 @@ async function updateMetaDataJson(
 }
 
 async function getImgList(path: string) {
+  if (settingsCustom.crypto.active) {
+    try {
+      return (await fs.readdir(`${path}/encrypted`))
+        .filter((p) => suffix.some((s) => p.replace('.buf', '').endsWith(s)))
+        .map((p) => p.replace('.buf', ''));
+    } catch (e) {}
+  }
   return (await fs.readdir(path)).filter((p) =>
     suffix.some((s) => p.endsWith(s)),
   );

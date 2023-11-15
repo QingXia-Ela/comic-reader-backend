@@ -18,7 +18,7 @@ export class CryptoService {
 
   async encryptoList(dir: string, outputDir: string) {
     await fs.ensureDir(outputDir);
-    await fs.emptyDir(outputDir);
+    if (settingsCustom.crypto.comic_sync_crypto) await fs.emptyDir(outputDir);
     const label = `\t\t${Logger.getTimestamp()}\tEncrypto ${dir}`;
     console.time(label);
     await Promise.all(
